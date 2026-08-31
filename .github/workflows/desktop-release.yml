@@ -858,8 +858,6 @@ jobs:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       SENTRY_DESKTOP_DSN: ${{ secrets.SENTRY_DESKTOP_DSN }}
       RELEASE_VERSION: ${{ needs.metadata.outputs.version }}
-      APPIMAGE_TOOL_VERSION: 1.9.1
-      APPIMAGETOOL_SHA256: ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0
 
     steps:
       - name: Check out release source
@@ -868,6 +866,15 @@ jobs:
       - name: Install Linux AppImage build dependencies
         run: |
           bash ./scripts/linux/install-desktop-build-dependencies.sh zsync
+
+      - name: Install appimage-builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          pip3 install --user appimage-builder
+          python_user_bin="$(python3 -m site --user-base)/bin"
+          echo "${python_user_bin}" >> "${GITHUB_PATH}"
+          "${python_user_bin}/appimage-builder" --version
 
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -888,31 +895,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          appimagetool_path="${RUNNER_TEMP}/appimagetool-x86_64.AppImage"
-          curl -fsSL -o "${appimagetool_path}" \
-            "https://github.com/AppImage/appimagetool/releases/download/${APPIMAGE_TOOL_VERSION}/appimagetool-x86_64.AppImage"
-            
-          actual_sha256="$(sha256sum "${appimagetool_path}" | awk '{print $1}')"
-          if [[ "${actual_sha256}" != "${APPIMAGETOOL_SHA256}" ]]; then
-            echo "appimagetool checksum mismatch." >&2
-            echo "Expected: ${APPIMAGETOOL_SHA256}" >&2
-            echo "Actual:   ${actual_sha256}" >&2
-            exit 1
-          fi
-
-          chmod +x "${appimagetool_path}"
-
-          repo_owner="${GITHUB_REPOSITORY%%/*}"
-          repo_name="${GITHUB_REPOSITORY#*/}"
-          update_information="gh-releases-zsync|${repo_owner}|${repo_name}|latest|Nuvio-Linux-x86_64-*.AppImage.zsync"
-
-          export APPIMAGETOOL="${appimagetool_path}"
-          export APPIMAGE_WEBSITE_URL="https://github.com/NuvioMedia/NuvioDesktop"
-
-          if [[ "${{ inputs.mode }}" == "publish" ]]; then
-            export UPDATE_INFORMATION="${update_information}"
-            export APPIMAGE_UPDATE_INFORMATION="${update_information}"
-          fi
+          export APPIMAGE_BUILDER="$(command -v appimage-builder)"
 
           ./gradlew \
             :composeApp:packageReleaseAppImage \
@@ -937,9 +920,8 @@ jobs:
           fi
 
           cp "${appimage_path}" "Nuvio-Linux-x86_64-${RELEASE_VERSION}.AppImage"
+          cp "${appimage_path}.zsync" "Nuvio-Linux-x86_64-${RELEASE_VERSION}.AppImage.zsync"
           chmod +x "Nuvio-Linux-x86_64-${RELEASE_VERSION}.AppImage"
-
-          zsyncmake "Nuvio-Linux-x86_64-${RELEASE_VERSION}.AppImage"
 
       - name: Verify AppImage
         shell: bash
@@ -955,23 +937,19 @@ jobs:
             echo "Expected AppImage to be executable: ${appimage_path}" >&2
             exit 1
           fi
-          if [[ "${{ inputs.mode }}" == "publish" ]]; then
-            if [[ ! -f "${zsync_path}" ]]; then
-              echo "Expected AppImage zsync metadata was not produced in publish mode: ${zsync_path}" >&2
-              exit 1
-            fi
-            update_info="$("./${appimage_path}" --appimage-updateinformation 2>/dev/null || true)"
-            if [[ -z "${update_info}" ]]; then
-              echo "AppImage update information is missing in publish mode." >&2
-              exit 1
-            fi
-            printf 'AppImage update information: %s\n' "${update_info}"
+          if [[ ! -f "${zsync_path}" ]]; then
+            echo "Expected AppImage zsync metadata was not produced in publish mode: ${zsync_path}" >&2
+            exit 1
           fi
+          update_info="$("./${appimage_path}" --appimage-updateinformation 2>/dev/null || true)"
+          if [[ -z "${update_info}" ]]; then
+            echo "AppImage update information is missing in publish mode." >&2
+            exit 1
+          fi
+          printf 'AppImage update information: %s\n' "${update_info}"
           
           ls -lh "${appimage_path}"
-          if [[ -f "${zsync_path}" ]]; then
-            ls -lh "${zsync_path}"
-          fi
+          ls -lh "${zsync_path}"
 
       - name: Upload AppImage
         uses: actions/upload-artifact@v7

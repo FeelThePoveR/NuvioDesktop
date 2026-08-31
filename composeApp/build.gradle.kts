@@ -1534,25 +1534,17 @@ if (isLinuxHost) {
         val appRoot = appRootCandidates.firstOrNull(File::isDirectory)
             ?: error("Expected Linux app-image directory in ${outputDir.absolutePath} for ${task.name}.")
 
-        val appImageTool = providers.gradleProperty("nuvio.appimagetool.path").orNull
+        val appImageBuilder = providers.gradleProperty("nuvio.appimage-builder.path").orNull
             ?.takeIf { it.isNotBlank() }
             ?.let(::File)
-            ?: System.getenv("APPIMAGETOOL")
+            ?: System.getenv("APPIMAGE_BUILDER")
                 ?.takeIf { it.isNotBlank() }
                 ?.let(::File)
-            ?: findExecutableOnPath("appimagetool")
+            ?: findExecutableOnPath("appimage-builder")
             ?: error(
-                "AppImage packaging requires appimagetool. Install it on PATH, set APPIMAGETOOL, " +
-                    "or pass -Pnuvio.appimagetool.path=/path/to/appimagetool."
+                "AppImage packaging requires appimage-builder. Install it on PATH, set APPIMAGE_BUILDER, " +
+                    "or pass -Pnuvio.appimage-builder.path=/path/to/appimage-builder."
             )
-
-        val updateInformation = providers.gradleProperty("nuvio.appimage.updateInformation").orNull
-            ?.takeIf { it.isNotBlank() }
-            ?: System.getenv("APPIMAGE_UPDATE_INFORMATION")?.takeIf { it.isNotBlank() }
-            ?: System.getenv("UPDATE_INFORMATION")?.takeIf { it.isNotBlank() }
-        val websiteUrl = providers.gradleProperty("nuvio.appimage.websiteUrl").orNull
-            ?.takeIf { it.isNotBlank() }
-            ?: System.getenv("APPIMAGE_WEBSITE_URL")?.takeIf { it.isNotBlank() }
 
         val distributionName = if (release) "main-release" else "main"
         val appImageName = "Nuvio-Linux-$linuxAppImageArch-$desktopReleaseVersionName.AppImage"
@@ -1568,15 +1560,8 @@ if (isLinuxHost) {
                 add(appImageBuildScript.absolutePath)
                 add(appRoot.absolutePath)
                 add(outputAppImage.absolutePath)
-                add(appImageTool.absolutePath)
-                if (updateInformation != null) {
-                    add("--update-information")
-                    add(updateInformation)
-                }
-                if (websiteUrl != null) {
-                    add("--website-url")
-                    add(websiteUrl)
-                }
+                add(appImageBuilder.absolutePath)
+                add(desktopReleaseVersionName)
             },
             "AppImage",
         )
@@ -1586,6 +1571,11 @@ if (isLinuxHost) {
         val publishedAppImage = publishedDir.resolve(appImageName)
         if (outputAppImage.canonicalFile != publishedAppImage.canonicalFile) {
             outputAppImage.copyTo(publishedAppImage, overwrite = true)
+        }
+        val outputZsync = outputAppImage.resolveSibling("${outputAppImage.name}.zsync")
+        val publishedZsync = publishedDir.resolve("${appImageName}.zsync")
+        if (outputZsync.isFile && outputZsync.canonicalFile != publishedZsync.canonicalFile) {
+            outputZsync.copyTo(publishedZsync, overwrite = true)
         }
         logger.lifecycle("Published Linux AppImage artifact: ${publishedAppImage.absolutePath}")
     }

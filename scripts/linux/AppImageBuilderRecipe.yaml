@@ -1,0 +1,60 @@
+# appimage-builder recipe see https://appimage-builder.readthedocs.io for details
+version: 1
+script:
+  # Workaround for error in Github Actions (https://github.com/AppImageCrafters/appimage-builder/issues/271)
+  - which mksquashfs || apt install squashfs-tools
+  - 'echo "Recipe working dir: $(pwd)"'
+  - 'echo "Expected AppDir: ./AppDir"'
+  - ls -la
+  - 'ls -la ./AppDir || echo "AppDir is missing"'
+  - mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+  - 'test -f AppDir/Nuvio.png && cp AppDir/Nuvio.png AppDir/usr/share/icons/hicolor/256x256/apps/Nuvio.png || echo "Nuvio icon missing in AppDir"'
+
+AppDir:
+  path: ./AppDir
+  app_info:
+    id: com.nuvio.media.desktop
+    name: Nuvio
+    icon: Nuvio
+    version: 0.0.0
+    exec: bin/Nuvio
+    exec_args: $@
+  apt:
+    arch:
+      - amd64
+    allow_unauthenticated: true
+    sources:
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ noble main universe
+    include:
+      - libmpv2
+      - libwebkit2gtk-4.1-0
+      - libsecret-1-0
+      - libglib2.0-0t64
+      - libxcomposite1
+      - libxext6
+      - gstreamer1.0-gl
+      - gstreamer1.0-plugins-good
+      - gstreamer1.0-libav
+      - glib-networking
+  after_bundle:
+    - ls -a
+    - find './usr/lib*' -name 'libwebkit*' -exec sed -i -e "s|/usr|././|g" '{}' \;
+  runtime:
+    env:
+      XDG_DATA_DIRS: '/usr/local/share/:/usr/share/:${XDG_DATA_DIRS}'
+      LD_LIBRARY_PATH: './usr/lib/x86_64-linux-gnu:./usr/lib:${LD_LIBRARY_PATH}'
+      WEBKIT_EXEC_PATH: './usr/lib/x86_64-linux-gnu/webkit2gtk-4.1'
+      WEBKIT_INJECTED_BUNDLE_PATH: './usr/lib/x86_64-linux-gnu/webkit2gtk-4.1'
+      WEBKIT_FORCE_SANDBOX: '0'
+      WEBKIT_DISABLE_SANDBOX_THIS_IS_INSECURE: '1'
+      GTK_PATH: './usr/lib/x86_64-linux-gnu/gtk-3.0'
+      GTK_MODULES: ''
+      -Dwebkit.exec.path: './usr/lib/x86_64-linux-gnu/webkit2gtk-4.1'
+      -Dwebkit.process.path: './usr/lib/x86_64-linux-gnu/webkit2gtk-4.1'
+  files:
+    include: []
+    exclude: []
+AppImage:
+  arch: x86_64
+  file_name: Nuvio-Linux-x86_64-${APP_VERSION}.AppImage
+  update-information: gh-releases-zsync|NuvioMedia|NuvioDesktop|latest|Nuvio-Linux-x86_64-*.AppImage.zsync
