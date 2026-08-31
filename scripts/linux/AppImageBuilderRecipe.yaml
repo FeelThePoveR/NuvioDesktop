@@ -38,6 +38,7 @@ AppDir:
       - glib-networking
   after_bundle:
     - ls -a
+    - find './' -name 'libwebkit*'
     - find './' -name 'libwebkit*' -exec sed -i -e "s|/usr|././|g" '{}' \;
   runtime:
     env:
