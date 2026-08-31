@@ -36,21 +36,15 @@ AppDir:
       - gstreamer1.0-plugins-good
       - gstreamer1.0-libav
       - glib-networking
+
   after_bundle:
-    - ls -a
+    # Patch webkit so it stops referencing host libs and uses the bundled ones instead
     - find './AppDir/usr/lib/x86_64-linux-gnu/' -name 'libwebkit2gtk-4.1*' -exec sed -i -e "s|/usr|./usr|g" '{}' \;
   runtime:
     env:
       XDG_DATA_DIRS: '/usr/local/share/:/usr/share/:${XDG_DATA_DIRS}'
       LD_LIBRARY_PATH: './usr/lib/x86_64-linux-gnu:./usr/lib:${LD_LIBRARY_PATH}'
-      WEBKIT_EXEC_PATH: './usr/lib/x86_64-linux-gnu/webkit2gtk-4.1'
-      WEBKIT_INJECTED_BUNDLE_PATH: './usr/lib/x86_64-linux-gnu/webkit2gtk-4.1'
-      WEBKIT_FORCE_SANDBOX: '0'
-      WEBKIT_DISABLE_SANDBOX_THIS_IS_INSECURE: '1'
-      GTK_PATH: './usr/lib/x86_64-linux-gnu/gtk-3.0'
-      GTK_MODULES: ''
-      -Dwebkit.exec.path: './usr/lib/x86_64-linux-gnu/webkit2gtk-4.1'
-      -Dwebkit.process.path: './usr/lib/x86_64-linux-gnu/webkit2gtk-4.1'
+      LD_PRELOAD: "$(ldconfig -p | grep -E '(libGL\.so\.1|libX11\.so\.6|libxcb\.so\.1) ' | grep 'x86-64' | awk -F' => ' '{print $2}' | tr '\\n' ':' | sed 's/:$//')"
   files:
     include: []
     exclude: []
