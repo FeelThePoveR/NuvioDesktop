@@ -68,6 +68,10 @@ AppDir:
       - usr/lib/x86_64-linux-gnu/libudev.so*
       - usr/lib/x86_64-linux-gnu/libarchive.so*
       - usr/lib/x86_64-linux-gnu/libcrypto.so*
+      - usr/lib/x86_64-linux-gnu/libzstd.so*
+      - usr/lib/x86_64-linux-gnu/libz.so*
+      - usr/lib/x86_64-linux-gnu/liblzma.so*
+      - usr/lib/x86_64-linux-gnu/libbz2.so*
 AppImage:
   arch: x86_64
   file_name: Nuvio-Linux-x86_64-${APP_VERSION}.AppImage
