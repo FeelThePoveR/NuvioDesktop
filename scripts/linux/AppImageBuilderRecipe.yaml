@@ -44,10 +44,31 @@ AppDir:
     env:
       XDG_DATA_DIRS: '/usr/local/share/:/usr/share/:${XDG_DATA_DIRS}'
       LD_LIBRARY_PATH: './usr/lib/x86_64-linux-gnu:./usr/lib:${LD_LIBRARY_PATH}'
-      LD_PRELOAD: "$(ldconfig -p | grep -E '(libGL.so.1|libX11.so.6|libxcb.so.1) ' | grep 'x86-64' | awk -F' => ' '{print $2}' | tr '\\n' ':' | sed 's/:$//')"
   files:
     include: []
-    exclude: []
+    exclude: 
+      - usr/share/man
+      - usr/share/doc/*/README.*
+      - usr/share/doc/*/changelog.*
+      - usr/share/doc/*/NEWS.*
+      - usr/share/doc/*/TODO.*
+
+      - usr/lib/x86_64-linux-gnu/libGL.so*
+      - usr/lib/x86_64-linux-gnu/libGLX.so*
+      - usr/lib/x86_64-linux-gnu/libGLdispatch.so*
+      - usr/lib/x86_64-linux-gnu/libEGL.so*
+      - usr/lib/x86_64-linux-gnu/libX11.so*
+      - usr/lib/x86_64-linux-gnu/libX11-xcb.so*
+      - usr/lib/x86_64-linux-gnu/libxcb*
+      - usr/lib/x86_64-linux-gnu/libXau.so*
+      - usr/lib/x86_64-linux-gnu/libdrm.so*
+      - usr/lib/x86_64-linux-gnu/libgbm.so*
+      - usr/lib/x86_64-linux-gnu/libwayland*
+      
+      - usr/lib/x86_64-linux-gnu/libsystemd.so*
+      - usr/lib/x86_64-linux-gnu/libudev.so*
+      - usr/lib/x86_64-linux-gnu/libudev.so*
+      - usr/lib/x86_64-linux-gnu/libsystemd.so*
 AppImage:
   arch: x86_64
   file_name: Nuvio-Linux-x86_64-${APP_VERSION}.AppImage
