@@ -42,8 +42,8 @@ AppDir:
     - find './AppDir/usr/lib/x86_64-linux-gnu/' -name 'libwebkit2gtk-4.1*' -exec sed -i -e "s|/usr|./usr|g" '{}' \;
   runtime:
     env:
-      XDG_DATA_DIRS: '/usr/local/share/:/usr/share/:${XDG_DATA_DIRS}'
-      LD_LIBRARY_PATH: './usr/lib/x86_64-linux-gnu:./usr/lib:${LD_LIBRARY_PATH}'
+      XDG_DATA_DIRS: '${APPDIR}/usr/share/:/usr/local/share/:/usr/share/:${XDG_DATA_DIRS}'
+      LD_LIBRARY_PATH: '${APPDIR}/usr/lib/x86_64-linux-gnu:${APPDIR}/usr/lib:${LD_LIBRARY_PATH}'
   files:
     include: []
     exclude: 
@@ -52,7 +52,7 @@ AppDir:
       - usr/share/doc/*/changelog.*
       - usr/share/doc/*/NEWS.*
       - usr/share/doc/*/TODO.*
-
+      # Exclude common system libs
       - usr/lib/x86_64-linux-gnu/libGL.so*
       - usr/lib/x86_64-linux-gnu/libGLX.so*
       - usr/lib/x86_64-linux-gnu/libGLdispatch.so*
@@ -64,11 +64,10 @@ AppDir:
       - usr/lib/x86_64-linux-gnu/libdrm.so*
       - usr/lib/x86_64-linux-gnu/libgbm.so*
       - usr/lib/x86_64-linux-gnu/libwayland*
-      
       - usr/lib/x86_64-linux-gnu/libsystemd.so*
       - usr/lib/x86_64-linux-gnu/libudev.so*
-      - usr/lib/x86_64-linux-gnu/libudev.so*
-      - usr/lib/x86_64-linux-gnu/libsystemd.so*
+      - usr/lib/x86_64-linux-gnu/libarchive.so*
+      - usr/lib/x86_64-linux-gnu/libcrypto.so*
 AppImage:
   arch: x86_64
   file_name: Nuvio-Linux-x86_64-${APP_VERSION}.AppImage
