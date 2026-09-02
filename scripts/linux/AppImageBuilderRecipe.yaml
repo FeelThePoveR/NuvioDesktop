@@ -61,6 +61,9 @@ AppDir:
       - usr/lib/x86_64-linux-gnu/libdrm.so*
       - usr/lib/x86_64-linux-gnu/libgbm.so*
       - usr/lib/x86_64-linux-gnu/libwayland*
+      - usr/lib/x86_64-linux-gnu/libc.so.*
+      - usr/lib/x86_64-linux-gnu/libld-linux-x86-64.so.*
+      - usr/lib/x86_64-linux-gnu/libstdc++.so.*
 AppImage:
   arch: x86_64
   file_name: Nuvio-Linux-x86_64-${APP_VERSION}.AppImage
