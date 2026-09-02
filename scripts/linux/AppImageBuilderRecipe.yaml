@@ -24,14 +24,31 @@ AppDir:
       - amd64
     allow_unauthenticated: true
     sources:
-      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy main universe
-      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-updates main universe
-      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-security main universe
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy main restricted
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920d1991bc93c'
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920d1991bc93c'
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy universe
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920d1991bc93c'
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-updates universe
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920d1991bc93c'
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy multiverse
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920d1991bc93c'
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-updates multiverse
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920d1991bc93c'
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-backports main restricted universe multiverse
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920d1991bc93c'
+      - sourceline: deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920d1991bc93c'
+      - sourceline: deb http://security.ubuntu.com/ubuntu/ jammy-security universe
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920d1991bc93c'
+      - sourceline: deb http://security.ubuntu.com/ubuntu/ jammy-security multiverse
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920d1991bc93c'
     include:
-      - libmpv2
+      - libmpv1
       - libwebkit2gtk-4.1-0
       - libsecret-1-0
-      - libglib2.0-0t64
+      - libglib2.0-0
       - libxcomposite1
       - libxext6
       - gstreamer1.0-gl
