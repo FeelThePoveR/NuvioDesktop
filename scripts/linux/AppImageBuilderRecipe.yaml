@@ -88,6 +88,21 @@ AppDir:
   after_bundle:
     # Patch webkit so it stops referencing host libs and uses the bundled ones instead
     - find './AppDir/usr/lib/x86_64-linux-gnu/' -name 'libwebkit2gtk-4.1*' -exec sed -i -e "s|/usr|./usr|g" '{}' \;
+    # Override generated AppRun so JVM/JNI starts without AppImage preload/audit hooks.
+    - |
+      cat > ./AppDir/AppRun <<'EOF'
+      #!/usr/bin/env bash
+      set -euo pipefail
+      APPDIR="$(cd -- "$(dirname -- "$0")" && pwd)"
+      export APPDIR
+      unset LD_PRELOAD
+      unset LD_AUDIT
+      export LD_LIBRARY_PATH="${APPDIR}/lib:${APPDIR}/lib/x86_64-linux-gnu:${APPDIR}/usr/lib:${APPDIR}/usr/lib/x86_64-linux-gnu:${APPDIR}/lib/runtime/lib:${APPDIR}/lib/app"
+      export PATH="${APPDIR}/usr/bin:${APPDIR}/bin"
+      export XDG_DATA_DIRS="${APPDIR}/usr/share/:/usr/local/share/:/usr/share/:${XDG_DATA_DIRS:-}"
+      exec "${APPDIR}/bin/Nuvio" "$@"
+      EOF
+    - chmod 755 ./AppDir/AppRun
   runtime:
     env:
       # Keep runtime resolution deterministic inside AppDir and disable AppRun preload hooks for JVM/JNI.
