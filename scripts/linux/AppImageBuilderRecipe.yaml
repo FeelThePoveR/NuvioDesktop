@@ -37,12 +37,18 @@ AppDir:
       - gstreamer1.0-libav
       - glib-networking
 
-  after_bundle:
-    # Patch webkit so it stops referencing host libs and uses the bundled ones instead
-    - find './AppDir/usr/lib/x86_64-linux-gnu/' -name 'libwebkit2gtk-4.1*' -exec sed -i -e "s|/usr|./usr|g" '{}' \;
   runtime:
     env:
       XDG_DATA_DIRS: '${APPDIR}/usr/share/:/usr/local/share/:/usr/share/:${XDG_DATA_DIRS}'
+    # Prefer bundled copies for bridge-critical multimedia/webkit libs.
+    # This avoids mutating ELF binaries while still steering fixed-path lookups.
+    path_mappings:
+      - /usr/lib/x86_64-linux-gnu/libmpv.so.2:$APPDIR/usr/lib/x86_64-linux-gnu/libmpv.so.2
+      - /usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.1.so.0:$APPDIR/usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.1.so.0
+      - /usr/lib/x86_64-linux-gnu/libjavascriptcoregtk-4.1.so.0:$APPDIR/usr/lib/x86_64-linux-gnu/libjavascriptcoregtk-4.1.so.0
+      - /usr/lib64/libmpv.so.2:$APPDIR/usr/lib/x86_64-linux-gnu/libmpv.so.2
+      - /usr/lib64/libwebkit2gtk-4.1.so.0:$APPDIR/usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.1.so.0
+      - /usr/lib64/libjavascriptcoregtk-4.1.so.0:$APPDIR/usr/lib/x86_64-linux-gnu/libjavascriptcoregtk-4.1.so.0
   files:
     include: []
     exclude: 
