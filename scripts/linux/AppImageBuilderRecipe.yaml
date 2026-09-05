@@ -30,8 +30,21 @@ AppDir:
       - libwebkit2gtk-4.1-0
       - libsecret-1-0
       - libglib2.0-0
+      - libgtk-3-0
+      - libgdk-pixbuf-2.0-0
+      - libcairo2
+      - libpango-1.0-0
+      - libatk1.0-0
+      - libatk-bridge2.0-0
+      - libgraphene-1.0-0
+      - libepoxy0
+      - libfribidi0
+      - libharfbuzz0b
+      - libsoup-3.0-0
+      - libgstreamer-plugins-base1.0-0
       - libxcomposite1
       - libxext6
+      - gstreamer1.0-plugins-base
       - gstreamer1.0-0
       - gstreamer1.0-gl
       - gstreamer1.0-plugins-good
@@ -92,15 +105,6 @@ AppDir:
       - usr/lib/x86_64-linux-gnu/libdrm.so.2
       - usr/lib/x86_64-linux-gnu/libglapi.so.0
       - usr/lib/x86_64-linux-gnu/libgbm.so.1
-      - usr/lib/x86_64-linux-gnu/libxcb.so.1
-      - usr/lib/x86_64-linux-gnu/libX11.so.6
-      - usr/lib/x86_64-linux-gnu/libX11-xcb.so.1
-      - usr/lib/x86_64-linux-gnu/libwayland-client.so.0
-      - usr/lib/x86_64-linux-gnu/libasound.so.2
-      - usr/lib/x86_64-linux-gnu/libfontconfig.so.1
-      - usr/lib/x86_64-linux-gnu/libfreetype.so.6
-      - usr/lib/x86_64-linux-gnu/libharfbuzz.so.0
-      - usr/lib/x86_64-linux-gnu/libcom_err.so.2
       - usr/lib/x86_64-linux-gnu/libexpat.so.1
       - usr/lib/x86_64-linux-gnu/libgcc_s.so.1
       - usr/lib/x86_64-linux-gnu/libgpg-error.so.0
