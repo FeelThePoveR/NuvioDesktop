@@ -47,16 +47,16 @@ private const val MacosDarkAquaAppearance = "NSAppearanceNameDarkAqua"
 fun main(args: Array<String>) {
     // On Linux, initialize GTK BEFORE AWT/Compose/Skia to prevent GdkDisplayManager
     // type registration conflict (Skiko partially loads GDK without full GTK init).
-    if (System.getProperty("os.name", "").lowercase().contains("linux")) {
-        runCatching { NativePlayerBridge.initGtkEarly() }
-    }
+    // if (System.getProperty("os.name", "").lowercase().contains("linux")) {
+    //     runCatching { NativePlayerBridge.initGtkEarly() }
+    // }
     applyDesktopRendererPreference()
     SentryInitializer.start()
     configureDesktopQuickJsLibrary()
     configureDesktopChrome()
     installDesktopOpenUriHandler()
     handleDesktopLaunchArgs(args)
-    preloadNativePlayerBridgeAsync()
+    // preloadNativePlayerBridgeAsync()
     // Load cached profile data synchronously so the profile color is available
     // on the very first Compose frame (matching Android's SharedPreferences behavior).
     ProfileRepository.loadCachedProfiles()
