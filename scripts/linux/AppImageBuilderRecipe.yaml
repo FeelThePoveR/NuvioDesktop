@@ -100,10 +100,6 @@ AppDir:
       - usr/share/doc/*/NEWS.*
       - usr/share/doc/*/TODO.*
       # Additional host-provided libs (from curated exclusion list in pkg2appimage repo)
-      - usr/lib/x86_64-linux-gnu/libGL.so*
-      - usr/lib/x86_64-linux-gnu/libGLX.so*
-      - usr/lib/x86_64-linux-gnu/libGLdispatch.so*
-      - usr/lib/x86_64-linux-gnu/libEGL.so*
       - usr/lib/x86_64-linux-gnu/libc.so.*
       - usr/lib/x86_64-linux-gnu/libld-linux-x86-64.so.*
       - usr/lib/x86_64-linux-gnu/libstdc++.so.*
@@ -128,12 +124,6 @@ AppDir:
       - usr/lib/x86_64-linux-gnu/libthread_db.so.1
       - usr/lib/x86_64-linux-gnu/libutil.so.1
       - usr/lib/x86_64-linux-gnu/libstdc++.so.6
-      - usr/lib/x86_64-linux-gnu/libGL.so.1
-      - usr/lib/x86_64-linux-gnu/libEGL.so.1
-      - usr/lib/x86_64-linux-gnu/libGLdispatch.so.0
-      - usr/lib/x86_64-linux-gnu/libGLX.so.0
-      - usr/lib/x86_64-linux-gnu/libOpenGL.so.0
-      - usr/lib/x86_64-linux-gnu/libglapi.so.0
       - usr/lib/x86_64-linux-gnu/libgcc_s.so.1
       - usr/lib/x86_64-linux-gnu/libgpg-error.so.0
       - usr/lib/x86_64-linux-gnu/libICE.so.6
