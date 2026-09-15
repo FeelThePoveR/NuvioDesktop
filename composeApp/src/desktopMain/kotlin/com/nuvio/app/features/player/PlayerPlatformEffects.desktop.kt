@@ -75,6 +75,7 @@ actual fun rememberPlayerGestureController(): PlayerGestureController? = null
 private class DesktopKeepAwakeController : AutoCloseable {
     private var caffeinateProcess: Process? = null
     private var windowsDisplaySleepInhibited = false
+    private var linuxInhibitEnabled = false
     private var linuxInhibitCookie: Long? = null
     private var linuxInhibitProcess: Process? = null
     private var linuxInhibitExecutor: ExecutorService? = null
@@ -138,13 +139,21 @@ private class DesktopKeepAwakeController : AutoCloseable {
     // D-Bus Inhibit call alone doesn't stop the screen lock, only systemd-inhibit does - other
     // DEs may lean on the D-Bus call instead, so both run.
     private fun setLinuxInhibitEnabled(enabled: Boolean) {
+        if (linuxInhibitEnabled == enabled) return
+
         linuxExecutor().execute {
-            if (enabled) {
-                if (linuxInhibitCookie == null) tryStartDbusScreenSaverInhibit()
-                if (linuxInhibitProcess?.isAlive != true) tryStartSystemdInhibit()
+            val applied = if (enabled) {
+                val dbusApplied = if (linuxInhibitCookie == null) tryStartDbusScreenSaverInhibit() else true
+                val systemdApplied = if (linuxInhibitProcess?.isAlive != true) tryStartSystemdInhibit() else true
+                dbusApplied || systemdApplied
             } else {
                 stopDbusScreenSaverInhibit()
                 stopSystemdInhibit()
+                true
+            }
+
+            if (applied) {
+                linuxInhibitEnabled = enabled
             }
         }
     }
@@ -229,6 +238,7 @@ private class DesktopKeepAwakeController : AutoCloseable {
             executor.execute {
                 stopDbusScreenSaverInhibit()
                 stopSystemdInhibit()
+                linuxInhibitEnabled = false
             }
             executor.shutdown()
         }
